@@ -27,6 +27,10 @@ class Lista {
 
         bool isEmpty() {return this->head == nullptr;}
 
+        Nodo<T>* getHead() {return this->head;}
+
+        Nodo<T>* getTail() {return this->tail;}
+
         void insertHead(T x) {
             if (this->isEmpty()) {
                 this->head = new Nodo<T>(x);
