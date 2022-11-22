@@ -24,6 +24,8 @@ class Lista {
 
         bool isEmpty() {return this->head == nullptr;}
 
+        Nodo<T>* getHead() {return this->head;}
+
         void insertHead(T x) {                                                //O(1)
             if (this->isEmpty()) {
                 this->head = new Nodo<T>(x);
@@ -125,20 +127,14 @@ class Lista {
         }
 
         Nodo<T>* ricerca(T x) {
-            if (this->isEmpty()) {
-                cerr << "Errore! La lista e' vuota." << endl;
-                return nullptr;
-            }
+            if (this->isEmpty()) return nullptr;
 
             Nodo<T>* app = this->head;
             while (app != nullptr || app->getX() != x) {
                 app = app->getSucc();
             }
 
-            if (app == nullptr) {
-                cerr << "Errore! Il nodo cercato non e' presente nella lista." << endl;
-                return nullptr;
-            }
+            if (app == nullptr) return nullptr;
 
             return app;
         }
