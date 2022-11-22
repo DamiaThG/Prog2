@@ -8,6 +8,7 @@ class Nodo {
     friend class Lista;
 
     public:
+        Nodo() : x(0), succ(nullptr), prec(nullptr) {}
         Nodo(T val) : x(val), succ(nullptr), prec(nullptr) {}
 
         T getX() {return this->x;}
@@ -160,7 +161,8 @@ class Coda : protected Lista<T> {
         }
 
         Nodo<T> dequeue() {
-            if (this->isEmpty()) return;
+            Nodo<T> empty;
+            if (this->isEmpty()) return empty;
 
             Nodo<T> temp = *(Lista<T>::getHead());
             Lista<T>::deleteHead();
