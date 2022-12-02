@@ -5,6 +5,7 @@ template <typename T>
 class Nodo {
     T x;
     Nodo<T>* succ, *prec;
+    
     friend class Lista;
 
     public:
