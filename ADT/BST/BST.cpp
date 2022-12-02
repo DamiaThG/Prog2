@@ -43,6 +43,109 @@ template <typename T>
 class BST {
     NodoBST<T>* root;
 
+    void insert(NodoBST<T>* ptr, T x) {
+        if(ptr->sx == nullptr && x <= ptr->x) {
+            ptr->sx = new NodoBST<T>(x);
+            ptr->sx->parent = ptr;
+            return;
+        }
+        if(ptr->dx == nullptr && x > ptr->x) {
+            ptr->dx = new NodoBST<T>(x);
+            ptr->dx->parent = ptr;
+            return;
+        }
+        else if(x <= ptr->x)
+            insert(ptr->sx, x);
+        else
+            insert(ptr->dx, x);
+    }
+
+    void visitPre(NodoBST<T>* ptr) {
+        if (ptr == nullptr) return;
+
+        visita(ptr);
+        visitPre(ptr->sx);
+        visitPre(ptr->dx);
+    }
+
+    void visitPost(NodoBST<T>* ptr) {
+        if (ptr == nullptr) return;
+
+        visitPre(ptr->sx);
+        visitPre(ptr->dx);
+        visita(ptr);
+    }
+
+    void visitIn(NodoBST<T>* ptr) {
+        if (ptr == nullptr) return;
+
+        visitIn(ptr->sx);
+        vista(ptr);
+        visitIn(ptr->dx);
+    }
+
+    NodoBST<T>* ricerca(NodoBST<T>* ptr, T x) {
+        if (ptr == nullptr) return nullptr;
+        if (ptr->x == x) return ptr;
+
+        if (x <= ptr->x) ricerca(ptr->sx, x);
+        else ricerca(ptr->dx, x);
+
+        return nullptr;
+    }
+
+    NodoBST<T>* min(NodoBST<T>* nodo) {
+        if (this->isEmpty()) return nullptr;
+
+        NodoBST<T>* ptr = nodo;
+        while (ptr->sx) ptr = ptr->sx;
+
+        return ptr;
+    }
+
+    NodoBST<T>* max(NodoBST<T>* nodo) {
+        if (this->isEmpty()) return nullptr;
+
+        NodoBST<T>* ptr = nodo;
+        while (ptr->dx) ptr = ptr->dx;
+
+        return ptr;
+    }
+
+    NodoBST<T>* remove(NodoBST<T>* nodo) {
+        if (nodo == this->getRoot() && nodo->dx == nullptr && nodo->sx == nullptr) {
+            this->root = nullptr;
+            return nodo;
+        }
+
+        if (nodo->dx == nullptr && nodo->sx == nullptr) {
+            if (nodo->parent->dx == nodo) nodo->parent->dx = nullptr;
+            else nodo->parent->sx = nullptr;
+
+            return nodo;
+        } 
+
+        if (nodo->dx != nullptr && nodo->sx == nullptr) {
+            nodo->dx->parent = nodo->parent;
+
+            if (nodo->parent->dx == nodo) nodo->parent->dx = nodo->dx;
+            else nodo->parent->sx = nodo->dx;
+
+            return nodo;
+        }
+
+        if (nodo->dx == nullptr && nodo->sx != nullptr) {
+            nodo->sx->parent = nodo->parent;
+
+            if (nodo->parent->dx == nodo) nodo->parent->dx = nodo->sx;
+            else nodo->parent->sx = nodo->sx;
+
+            return nodo;
+        }
+
+        return nullptr;
+    }
+
     public:
         BST() : root(nullptr) {}
 
@@ -57,89 +160,20 @@ class BST {
             }
             insert(root, x);
         }
-        
-        void insert(NodoBST<T>* ptr, T x) {
-            if(ptr->sx == nullptr && x <= ptr->x) {
-                ptr->sx = new NodoBST<T>(x);
-                ptr->sx->parent = ptr;
-                return;
-            }
-            if(ptr->dx == nullptr && x > ptr->x) {
-                ptr->dx = new NodoBST<T>(x);
-                ptr->dx->parent = ptr;
-                return;
-            }
-            else if(x <= ptr->x)
-                insert(ptr->sx, x);
-            else
-                insert(ptr->dx, x);
-        }
 
         void visita(NodoBST<T>* nodo) {cout << *nodo << endl;}
 
-        void visitPre(NodoBST<T>* ptr) {
-            if (ptr == nullptr) return;
-
-            visita(ptr);
-            visitPre(ptr->sx);
-            visitPre(ptr->dx);
-        }
-
         void visitPre() {visitPre(this->getRoot());}
-
-        void visitPost(NodoBST<T>* ptr) {
-            if (ptr == nullptr) return;
-
-            visitPre(ptr->sx);
-            visitPre(ptr->dx);
-            visita(ptr);
-        }
 
         void visitPost() {visitPost(this->getRoot());}
 
-        void visitIn(NodoBST<T>* ptr) {
-            if (ptr == nullptr) return;
-
-            visitIn(ptr->sx);
-            vista(ptr);
-            visitIn(ptr->dx);
-        }
-
         void visitIn() {visitIn(this->getRoot());}
 
-        NodoBST<T>* ricerca(T x) {ricerca(this->getRoot(), x);}
-
-        NodoBST<T>* ricerca(NodoBST<T>* ptr, T x) {
-            if (ptr == nullptr) return nullptr;
-            if (ptr->x == x) return ptr;
-
-            if (x <= ptr->x) ricerca(ptr->sx, x);
-            else ricerca(ptr->dx, x);
-
-            return nullptr;
-        }
+        NodoBST<T>* ricerca(T x) {return ricerca(this->getRoot(), x);}
 
         NodoBST<T>* min() {return min(this->getRoot());}
 
-        NodoBST<T>* min(NodoBST<T>* nodo) {
-            if (this->isEmpty()) return nullptr;
-
-            NodoBST<T>* ptr = nodo;
-            while (ptr->sx) ptr = ptr->sx;
-
-            return ptr;
-        }
-
         NodoBST<T>* max() {return max(this->getRoot());}
-
-        NodoBST<T>* max(NodoBST<T>* nodo) {
-            if (this->isEmpty()) return nullptr;
-
-            NodoBST<T>* ptr = nodo;
-            while (ptr->dx) ptr = ptr->dx;
-
-            return ptr;
-        }
 
         NodoBST<T>* successore(NodoBST<T>* nodo) {
             if (this->isEmpty()) return nullptr;
@@ -169,40 +203,6 @@ class BST {
             }
 
             return p;
-        }
-
-        NodoBST<T>* remove(NodoBST<T>* nodo) {
-            if (nodo == this->getRoot() && nodo->dx == nullptr && nodo->sx == nullptr) {
-                this->root = nullptr;
-                return nodo;
-            }
-
-            if (nodo->dx == nullptr && nodo->sx == nullptr) {
-                if (nodo->parent->dx == nodo) nodo->parent->dx = nullptr;
-                else if (nodo->parent->sx == nodo) nodo->parent->sx = nullptr;
-
-                return nodo;
-            } 
-
-            if (nodo->dx != nullptr && nodo->sx == nullptr) {
-                nodo->dx->parent = nodo->parent;
-
-                if (nodo->parent->sx == nodo) nodo->parent->sx = nodo->dx;
-                else if (nodo->parent->dx == nodo) nodo->parent->dx = nodo->dx;
-
-                return nodo;
-            }
-
-            if (nodo->dx == nullptr && nodo->sx != nullptr) {
-                nodo->sx->parent = nodo->parent;
-
-                if (nodo->parent->sx == nodo) nodo->parent->sx = nodo->sx;
-                else if (nodo->parent->dx == nodo) nodo->parent->dx = nodo->sx;
-
-                return nodo;
-            }
-
-            return nullptr;
         }
 
         NodoBST<T>* remove(T x) {
