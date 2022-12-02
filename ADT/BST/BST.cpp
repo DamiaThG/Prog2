@@ -26,19 +26,16 @@ class NodoBST {
 
         T getX() {return this->x;}
 
-        friend ostream& operator<< (ostream& out, NodoBST<T>& nodo);
+        friend ostream& operator<< (ostream& out, NodoBST<T>& nodo) {
+            if (nodo.verbose) {
+                out << "Node@" << &nodo << " key = " << nodo.x << " left = " << nodo.sx << " right = " << nodo.dx << " parent = " << nodo.parent << endl;
+            } else {
+                out << "key = " << nodo.x << endl;
+            }
+
+            return out;
+        }
 };
-
-template <typename T>
-ostream& operator<< (ostream& out, NodoBST<T>& nodo) {
-    if (nodo.verbose) {
-        out << "Node@" << &nodo << " key = " << nodo.x << " left = " << nodo.sx << " right = " << nodo.dx << " parent = " << nodo.parent << endl;
-    } else {
-        out << "key = " << nodo.x << endl;
-    }
-
-    return out;
-}
 
 template <typename T>
 class BST {
