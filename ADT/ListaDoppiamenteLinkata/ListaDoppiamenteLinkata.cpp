@@ -104,45 +104,27 @@ class Lista {
             delete temp;
         }
 
-        void deleteNode(T x) {
-            if (this->isEmpty()) {
-                cerr << "Errore! La lista e' vuota." << endl;
-                return;
-            }
-
-            Nodo<T>* thi = this->head;
-
-            while (thi != nullptr || thi->x != x) {
-                thi = thi->succ;
-            }
-
-            if (thi == nullptr) {
-                cerr << "Errore! Il nodo cercato non e' presente nella lista." << endl;
-                return;
-            }
-
-            thi->prec->succ = thi->succ;
-            thi->succ->prec = thi->prec;
-            delete thi;
-        }
-
         Nodo<T>* ricerca(T x) {
-            if (this->isEmpty()) {
-                cerr << "Errore! La lista e' vuota." << endl;
-                return nullptr;
-            }
+            if (this->isEmpty()) return nullptr;
 
             Nodo<T>* thi = this->head;
             while (thi != nullptr || thi->x != x) {
                 thi = thi->succ;
             }
 
-            if (thi == nullptr) {
-                cerr << "Errore! Il nodo cercato non e' presente nella lista." << endl;
-                return nullptr;
-            }
+            if (thi == nullptr) return nullptr;
 
             return thi;
+        }
+
+        void deleteNode(T x) {
+            Nodo<T>* search = ricerca(x);
+
+            if (search == nullptr) return;
+
+            search->prec->succ = search->succ;
+            search->succ->prec = search->prec;
+            delete search;
         }
 };
 
