@@ -61,22 +61,52 @@ class BST {
         
         void insert(NodoBST<T>* ptr, T x) {
             if(ptr->getSinistro() == nullptr && x <= ptr->getX()) {
-                ptr->getSinistro() = new NodoBST<T>(x);
+                ptr->setSinistro(new NodoBST<T>(x));
                 ptr->getSinistro()->setParente(ptr);
                 return;
             }
             if(ptr->getDestro() == nullptr && x > ptr->getX()) {
-                ptr->right = new BSTNode<T>(key);
-                ptr->right->parent = ptr;
+                ptr->setDestro(new NodoBST<T>(x));
+                ptr->getDestro()->setParente(ptr);
                 return;
             }
-            else if(key <= ptr->key)
-                insert(ptr->left, key);
+            else if(x <= ptr->getX())
+                insert(ptr->getSinistro(), x);
             else
-                insert(ptr->right, key);
+                insert(ptr->getDestro(), x);
         }
 
-        void visit(NodoBST<T>* nodo) {cout << }
+        void visita(NodoBST<T>* nodo) {cout << *nodo << endl;}
+
+        void visitPre(NodoBST<T>* ptr) {
+            if (ptr == nullptr) return;
+
+            visita(ptr);
+            visitPre(ptr->getSinistro());
+            visitPre(ptr->getDestro());
+        }
+
+        void visitPre() {visitPre(this->getRoot());}
+
+        void visitPost(NodoBST<T>* ptr) {
+            if (ptr == nullptr) return;
+
+            visitPre(ptr->getSinistro());
+            visitPre(ptr->getDestro());
+            visita(ptr);
+        }
+
+        void visitPost() {visitPost(this->getRoot());}
+
+        void visitIn(NodoBST<T>* ptr) {
+            if (ptr == nullptr) return;
+
+            visitPre(ptr->getSinistro());
+            vista(ptr);
+            visitPre(ptr->getDestro());
+        }
+
+        void visitIn() {visitIn(this->getRoot());}
 };
 
 int main() {
