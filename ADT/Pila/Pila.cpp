@@ -6,6 +6,8 @@ class Nodo {
     T x;
     Nodo<T>* succ;
 
+    friend class Lista;
+
     public:
         Nodo(T val) : x(val), succ(nullptr) {}
 
@@ -33,7 +35,7 @@ class Lista {
             }
 
             Nodo<T>* temp = new Nodo<T>(x);
-            temp->setSucc(this->head);
+            temp->succ = this->head;
             this->head = temp;
         }
 
@@ -44,33 +46,33 @@ class Lista {
             }
 
             Nodo<T>* app = this->head;
-            while (app->getSucc() != nullptr) {
-                app = app->getSucc();
+            while (app->succ != nullptr) {
+                app = app->succ;
             }
 
             Nodo<T>* temp = new Nodo<T>(x);
-            app->setSucc(temp);
+            app->succ = temp;
         }
 
         void insertInOrder(T x) {                                               //O(n) 
-            if (this->isEmpty() || x <= this->head->getX()) {
+            if (this->isEmpty() || x <= this->head->x) {
                 this->head = new Nodo<T>(x);
                 return;
             }
 
             Nodo<T>* app = this->head;
-            while (app->getX() <= x && app->getSucc() != nullptr) {
-                if (app->getSucc()->getX() >= x) break;
-                app = app->getSucc();
+            while (app->x <= x && app->succ != nullptr) {
+                if (app->succ->x >= x) break;
+                app = app->succ;
             }
 
             Nodo<T>* temp = new Nodo<T>(x);
-            if (app->getSucc() == nullptr) {
+            if (app->succ == nullptr) {
                 this->insertTail(x);
             }
             else {
-                temp->setSucc(app->getSucc());
-                app->setSucc(temp);
+                temp->succ = app->succ;
+                app->succ = temp;
             }
         }
 
@@ -81,7 +83,7 @@ class Lista {
             }
 
             Nodo<T>* temp = this->head;
-            this->head = this->head->getSucc();
+            this->head = this->head->succ;
             delete temp;
         }
 
@@ -94,12 +96,12 @@ class Lista {
             Nodo<T>* thi = this->head;
             Nodo<T>* prec = nullptr;
 
-            while (thi->getSucc() != nullptr) {
+            while (thi->succ != nullptr) {
                 prec = thi;
-                thi = thi->getSucc();
+                thi = thi->succ;
             }
 
-            prec->setSucc(nullptr);
+            prec->succ = nullptr;
             delete thi;
         }
 
@@ -112,9 +114,9 @@ class Lista {
             Nodo<T>* thi = this->head;
             Nodo<T>* prec = nullptr;
 
-            while (thi != nullptr || thi->getX() != x) {
+            while (thi != nullptr || thi->x != x) {
                 prec = thi;
-                thi = thi->getSucc();
+                thi = thi->succ;
             }
 
             if (thi == nullptr) {
@@ -122,7 +124,7 @@ class Lista {
                 return;
             }
 
-            prec->setSucc(thi->getSucc());
+            prec->succ = thi->succ;
             delete thi;
         }
 
@@ -133,8 +135,8 @@ class Lista {
             }
 
             Nodo<T>* app = this->head;
-            while (app != nullptr || app->getX() != x) {
-                app = app->getSucc();
+            while (app != nullptr || app->x != x) {
+                app = app->succ;
             }
 
             if (app == nullptr) {
