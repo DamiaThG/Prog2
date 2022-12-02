@@ -7,6 +7,8 @@ class NodoBST {
     NodoBST<T>* dx, * sx, *parent;
     bool verbose = false;
 
+    friend class BST;
+
     public:
         NodoBST(T val, bool verbose = true) : x(val), dx(nullptr), sx(nullptr), parent(nullptr), verbose(verbose) {}
 
@@ -57,20 +59,20 @@ class BST {
         }
         
         void insert(NodoBST<T>* ptr, T x) {
-            if(ptr->getSinistro() == nullptr && x <= ptr->getX()) {
-                ptr->setSinistro(new NodoBST<T>(x));
-                ptr->getSinistro()->setParente(ptr);
+            if(ptr->sx == nullptr && x <= ptr->x) {
+                ptr->sx = new NodoBST<T>(x);
+                ptr->sx->parent = ptr;
                 return;
             }
-            if(ptr->getDestro() == nullptr && x > ptr->getX()) {
-                ptr->setDestro(new NodoBST<T>(x));
-                ptr->getDestro()->setParente(ptr);
+            if(ptr->dx == nullptr && x > ptr->x) {
+                ptr->dx = new NodoBST<T>(x);
+                ptr->dx->parent = ptr;
                 return;
             }
-            else if(x <= ptr->getX())
-                insert(ptr->getSinistro(), x);
+            else if(x <= ptr->x)
+                insert(ptr->sx, x);
             else
-                insert(ptr->getDestro(), x);
+                insert(ptr->dx, x);
         }
 
         void visita(NodoBST<T>* nodo) {cout << *nodo << endl;}
@@ -79,8 +81,8 @@ class BST {
             if (ptr == nullptr) return;
 
             visita(ptr);
-            visitPre(ptr->getSinistro());
-            visitPre(ptr->getDestro());
+            visitPre(ptr->sx);
+            visitPre(ptr->dx);
         }
 
         void visitPre() {visitPre(this->getRoot());}
@@ -88,8 +90,8 @@ class BST {
         void visitPost(NodoBST<T>* ptr) {
             if (ptr == nullptr) return;
 
-            visitPre(ptr->getSinistro());
-            visitPre(ptr->getDestro());
+            visitPre(ptr->sx);
+            visitPre(ptr->dx);
             visita(ptr);
         }
 
@@ -98,9 +100,9 @@ class BST {
         void visitIn(NodoBST<T>* ptr) {
             if (ptr == nullptr) return;
 
-            visitIn(ptr->getSinistro());
+            visitIn(ptr->sx);
             vista(ptr);
-            visitIn(ptr->getDestro());
+            visitIn(ptr->dx);
         }
 
         void visitIn() {visitIn(this->getRoot());}
@@ -109,10 +111,10 @@ class BST {
 
         NodoBST<T>* ricerca(NodoBST<T>* ptr, T x) {
             if (ptr == nullptr) return nullptr;
-            if (ptr->getX() == x) return ptr;
+            if (ptr->x == x) return ptr;
 
-            if (x <= ptr->getX()) ricerca(ptr->getSinistro(), x);
-            else ricerca(ptr->getDestro(), x);
+            if (x <= ptr->x) ricerca(ptr->sx, x);
+            else ricerca(ptr->dx, x);
 
             return nullptr;
         }
@@ -123,7 +125,7 @@ class BST {
             if (this->isEmpty()) return nullptr;
 
             NodoBST<T>* ptr = nodo;
-            while (ptr->getSinistro()) ptr = ptr->getSinistro();
+            while (ptr->sx) ptr = ptr->sx;
 
             return ptr;
         }
@@ -134,7 +136,7 @@ class BST {
             if (this->isEmpty()) return nullptr;
 
             NodoBST<T>* ptr = nodo;
-            while (ptr->getDestro()) ptr = ptr->getDestro();
+            while (ptr->dx) ptr = ptr->dx;
 
             return ptr;
         }
@@ -142,16 +144,84 @@ class BST {
         NodoBST<T>* successore(NodoBST<T>* nodo) {
             if (this->isEmpty()) return nullptr;
 
-            if (nodo->getDestro()) return this->min(nodo->getDestro());
+            if (nodo->dx) return this->min(nodo->dx);
 
-            NodoBST<T>* p = nodo->getParente();
+            NodoBST<T>* p = nodo->parent;
 
-            while (p != nullptr && nodo == p->getDestro()) {
+            while (p != nullptr && nodo == p->dx) {
                 nodo = p;
-                p = p->getParente();
+                p = p->parent;
             }
 
             return p;
+        }
+
+        NodoBST<T>* predecessore(NodoBST<T>* nodo) {
+            if (this->isEmpty()) return nullptr;
+
+            if (nodo->sx) return this->max(nodo->sx);
+
+            NodoBST<T>* p = nodo->parent;
+
+            while (p != nullptr && nodo == p->sx) {
+                nodo = p;
+                p = p->parent;
+            }
+
+            return p;
+        }
+
+        NodoBST<T>* remove(NodoBST<T>* nodo) {
+            if (nodo == this->getRoot() && nodo->dx == nullptr && nodo->sx == nullptr) {
+                this->root = nullptr;
+                return nodo;
+            }
+
+            if (nodo->dx == nullptr && nodo->sx == nullptr) {
+                if (nodo->parent->dx == nodo) nodo->parent->dx = nullptr;
+                else if (nodo->parent->sx == nodo) nodo->parent->sx = nullptr;
+
+                return nodo;
+            } 
+
+            if (nodo->dx != nullptr && nodo->sx == nullptr) {
+                nodo->dx->parent = nodo->parent;
+
+                if (nodo->parent->sx == nodo) nodo->parent->sx = nodo->dx;
+                else if (nodo->parent->dx == nodo) nodo->parent->dx = nodo->dx;
+
+                return nodo;
+            }
+
+            if (nodo->dx == nullptr && nodo->sx != nullptr) {
+                nodo->sx->parent = nodo->parent;
+
+                if (nodo->parent->sx == nodo) nodo->parent->sx = nodo->sx;
+                else if (nodo->parent->dx == nodo) nodo->parent->dx = nodo->sx;
+
+                return nodo;
+            }
+
+            return nullptr;
+        }
+
+        NodoBST<T>* remove(T x) {
+            if (this->isEmpty()) return nullptr;
+
+            NodoBST<T>* nodo = this->ricerca(x);
+            if (nodod == nullptr) return nullptr;
+
+            NodoBST<T>* toDelete = this->remove(nodo);
+            if (toDelete != nullptr) return toDelete;
+
+            NodoBST<T>* succ = this->successore(nodo);
+            T temp = nodo->x;
+            nodo->x = succ->x;
+            succ->x = temp;
+
+            toDelete = this->remove(succ);
+
+            return toDelete;
         }
 };
 
