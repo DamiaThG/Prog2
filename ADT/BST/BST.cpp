@@ -209,7 +209,7 @@ class BST {
             if (this->isEmpty()) return nullptr;
 
             NodoBST<T>* nodo = this->ricerca(x);
-            if (nodod == nullptr) return nullptr;
+            if (nodo == nullptr) return nullptr;
 
             NodoBST<T>* toDelete = this->remove(nodo);
             if (toDelete != nullptr) return toDelete;
